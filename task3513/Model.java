@@ -56,33 +56,82 @@ public class Model {
         return emptyTiles;
     }
 
-    private void compressTiles(Tile[] tiles){
+    private boolean compressTiles(Tile[] tiles){
         boolean flag = true;
+        boolean t = false;
         while (flag) {
             flag = false;
             for (int y = 0; y < FIELD_WIDTH - 1; y++) {
                 if (tiles[y + 1].value != 0 && tiles[y].value == 0) {
-                    tiles[y].value = tiles[y + 1].value;
-                    tiles[y + 1].value = 0;
+                    tiles[y] = tiles[y + 1];
+                    tiles[y + 1] = new Tile();
                     flag = true;
+                    t = true;
                 }
+            }
+        }
+        return t;
+    }
+
+    private boolean mergeTiles(Tile[] tiles){
+        boolean change = false;
+        for (int i = 0; i < tiles.length - 1; i++) {
+            if (tiles[i].value == tiles[i+1].value && !tiles[i].isEmpty() && !tiles[i+1].isEmpty()) {
+                change = true;
+                tiles[i].value *= 2;
+                tiles[i+1] = new Tile();
+                maxTile = maxTile > tiles[i].value ? maxTile : tiles[i].value;
+                score += tiles[i].value;
+                compressTiles(tiles);
+            }
+        }
+        return change;
+    }
+
+    public void left(){
+
+        boolean isChanged = false;
+        for (int y = 0; y < FIELD_WIDTH; y++){
+             if (compressTiles(gameTiles[y]) || mergeTiles(gameTiles[y])){
+               isChanged = true;
+            }
+        }
+        if(isChanged)
+        addTile();
+    }
+
+    private void rotateToRight() {
+        Tile tmp;
+        for (int i = 0; i < FIELD_WIDTH / 2; i++) {
+            for (int j = i; j < FIELD_WIDTH - 1 - i; j++) {
+                tmp = gameTiles[i][j];
+                gameTiles[i][j] = gameTiles[FIELD_WIDTH-j-1][i];
+                gameTiles[FIELD_WIDTH-j-1][i] = gameTiles[FIELD_WIDTH-i-1][FIELD_WIDTH-j-1];
+                gameTiles[FIELD_WIDTH-i-1][FIELD_WIDTH-j-1] = gameTiles[j][FIELD_WIDTH-i-1];
+                gameTiles[j][FIELD_WIDTH-i-1] = tmp;
             }
         }
     }
 
-    private void mergeTiles(Tile[] tiles){
-            for (int y = 0; y < FIELD_WIDTH - 1; y++) {
-                if (tiles[y + 1].value == tiles[y].value ) {
-                    tiles[y].value += tiles[y].value;
-                    tiles[y + 1].value = 0;
-                    if (tiles[y].value > maxTile){
-                        maxTile = tiles[y].value;
-                    }
-                    score += tiles[y].value;
-                }
-            compressTiles(tiles);
-        }
+    void right() {
+        rotateToRight();
+        rotateToRight();
+        left();
+        rotateToRight();
+        rotateToRight();
     }
-
-
+    void up() {
+        rotateToRight();
+        rotateToRight();
+        rotateToRight();
+        left();
+        rotateToRight();
+    }
+    void down() {
+        rotateToRight();
+        left();
+        rotateToRight();
+        rotateToRight();
+        rotateToRight();
+    }
 }

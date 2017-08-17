@@ -6,6 +6,11 @@ import java.util.List;
 public class Model {
 
     private static final int FIELD_WIDTH = 4;                                  //Приватная константа FIELD_WIDTH = 4, определяющая ширину игрового поля.
+
+    public Tile[][] getGameTiles() {
+        return gameTiles;
+    }
+
     private Tile[][] gameTiles = new Tile[FIELD_WIDTH][FIELD_WIDTH];    //Приватный двумерный массив gameTiles состоящий из объектов класса Tile.
 
     protected int score; //счет
@@ -133,5 +138,23 @@ public class Model {
         rotateToRight();
         rotateToRight();
         rotateToRight();
+    }
+
+    public boolean canMove(){
+        if (!getEmptyTiles().isEmpty()) return true;
+
+        for (int i = 0; i < FIELD_WIDTH; i ++){
+            for (int j = 1; j < FIELD_WIDTH; j ++){
+                if (gameTiles[i][j].value == gameTiles[i][j-1].value) return true;
+            }
+        }
+
+        for (int i = 0; i < FIELD_WIDTH; i ++){
+            for (int j = 1; j < FIELD_WIDTH; j ++){
+                if (gameTiles[j][i].value == gameTiles[j-1][i].value) return true;
+            }
+        }
+
+        return false;
     }
 }

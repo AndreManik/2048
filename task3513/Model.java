@@ -114,6 +114,11 @@ public class Model {
     }
 
     protected void left(){
+
+        if (isSaveNeeded){
+            saveState(gameTiles);
+        }
+
         boolean isChanged = false;
 
         for (int i = 0; i < FIELD_WIDTH; i++){
@@ -124,6 +129,7 @@ public class Model {
         if (isChanged){
             addTile();
         }
+        isSaveNeeded = true;
     }
 
      private void rotateClockWay(){
@@ -140,6 +146,7 @@ public class Model {
     }
 
      void right(){
+         saveState(gameTiles);
          rotateClockWay();
          rotateClockWay();
          left();
@@ -148,6 +155,7 @@ public class Model {
     }
 
      void down(){
+         saveState(gameTiles);
         rotateClockWay();
         left();
         rotateClockWay();
@@ -156,6 +164,7 @@ public class Model {
     }
 
      void up(){
+        saveState(gameTiles);
         rotateClockWay();
         rotateClockWay();
         rotateClockWay();
